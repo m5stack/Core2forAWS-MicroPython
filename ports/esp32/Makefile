@@ -3,14 +3,14 @@
 # This is a simple, convenience wrapper around idf.py (which uses cmake).
 
 # Select the board to build for, defaulting to GENERIC.
-BOARD ?= GENERIC
+BOARD ?= EduKit
 
 # If the build directory is not given, make it reflect the board name.
 BUILD ?= build-$(BOARD)
 
 # Device serial settings.
 PORT ?= /dev/ttyUSB0
-BAUD ?= 460800
+BAUD ?= 1500000
 
 PYTHON ?= python3
 
