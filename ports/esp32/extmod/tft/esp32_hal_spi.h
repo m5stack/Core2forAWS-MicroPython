@@ -10,7 +10,7 @@ static inline void spiWaitFinish(spi_device_t* spi) {
     while(spi->host->hal.hw->cmd.usr);
 }
 
-void spiBusInit();
+spi_device_handle_t spiBusInit(int8_t mosi, int8_t miso, int8_t clk, int8_t cs);
 void spiInit(spi_device_t* spi, uint8_t bit_order);
 
 void spiWriteBytesDMA(spi_device_t* spi, const uint8_t *data, uint32_t len);

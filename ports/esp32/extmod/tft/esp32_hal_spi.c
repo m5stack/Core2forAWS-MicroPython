@@ -11,11 +11,6 @@
 #define MSB_16_SET(var, val) { (var) = (((val) & 0xFF00) >> 8) | (((val) & 0xFF) << 8); }
 #define MSB_PIX_SET(var, val) { uint8_t * d = (uint8_t *)&(val); (var) = d[1] | (d[0] << 8) | (d[3] << 16) | (d[2] << 24); }
 
-#define MISO_PIN 19
-#define MOSI_PIN 23
-#define CLK_PIN 18
-#define CS_PIN 14
-
 #define SPI_SPEED 40 * 1000 * 1000
 #define DMA_CHANNEL 2
 
@@ -24,49 +19,29 @@ spi_bus_config_t buscfg;
 spi_device_interface_config_t devcfg;
 spi_device_handle_t spi_handle;
 
-void spiPinInit() {
-    gpio_pad_select_gpio(MISO_PIN);
-    gpio_set_direction(MISO_PIN, GPIO_MODE_INPUT);
-    gpio_set_pull_mode(MISO_PIN, GPIO_PULLUP_ONLY);
-
-    gpio_pad_select_gpio(MOSI_PIN);
-    gpio_set_direction(MOSI_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_pull_mode(MOSI_PIN, GPIO_PULLUP_ONLY);
-    
-    gpio_pad_select_gpio(CLK_PIN);
-    gpio_set_direction(CLK_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_pull_mode(CLK_PIN, GPIO_PULLUP_ONLY);
-
-    gpio_pad_select_gpio(CS_PIN);
-    gpio_set_direction(CS_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_pull_mode(CS_PIN, GPIO_PULLUP_ONLY);
-}
-
-intr_handle_t intr;
+// intr_handle_t intr;
 
 // void IRAM_ATTR testIntr(void* arg) {
 //     spi_dev_t *dev = (spi_dev_t *)arg;
 //     dev->slave.trans_done = 0;
 // }
 
-void spiBusInit() {
-    spiPinInit();
-    buscfg.miso_io_num = MISO_PIN;			// set SPI MISO pin
-	buscfg.mosi_io_num = MOSI_PIN;			// set SPI MOSI pin
-	buscfg.sclk_io_num = CLK_PIN;			// set SPI CLK pin
+spi_device_handle_t spiBusInit(int8_t mosi, int8_t miso, int8_t clk, int8_t cs) {
+	buscfg.mosi_io_num = mosi;			// set SPI MOSI pin
+    buscfg.miso_io_num = miso;			// set SPI MISO pin
+	buscfg.sclk_io_num = clk;			// set SPI CLK pin
 	buscfg.quadwp_io_num = -1;
 	buscfg.quadhd_io_num = -1;
 	buscfg.max_transfer_sz = 1024 * 20;
-    buscfg.intr_flags = ESP_INTR_FLAG_SHARED | ESP_INTR_FLAG_IRAM; 
+    buscfg.intr_flags = 0; 
 
 	devcfg.clock_speed_hz = SPI_SPEED;    // Initial clock
 	devcfg.mode = 0;                          // SPI mode 0
-	devcfg.spics_io_num = CS_PIN;			        // we will use software cs select
+	devcfg.spics_io_num = cs;			        // we will use software cs select
 	devcfg.queue_size = 1;
 	devcfg.flags = SPI_DEVICE_NO_DUMMY;                          
 
     esp_err_t ret;
-    
     ret = spi_bus_initialize(spi_host, &buscfg, DMA_CHANNEL);
     ret |= spi_bus_add_device(spi_host, &devcfg, &spi_handle);
 
@@ -79,6 +54,7 @@ void spiBusInit() {
     // }
 
     spiInit(spi_handle, SPI_MSBFIRST);
+    return spi_handle;
 }
 
 void spiInit(spi_device_t* spi, uint8_t bit_order) {

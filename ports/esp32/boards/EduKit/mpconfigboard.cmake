@@ -4,4 +4,4 @@ set(SDKCONFIG_DEFAULTS
     boards/EduKit/sdkconfig.board
 )
 
-set(MICROPY_FROZEN_MANIFEST ${MICROPY_PORT_DIR}/boards/manifest.py)
+set(MICROPY_FROZEN_MANIFEST ${MICROPY_BOARD_DIR}/manifest.py)

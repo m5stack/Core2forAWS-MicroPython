@@ -142,6 +142,7 @@ typedef struct _tft_base_t {
 
     int miso;
     int mosi;
+    int clk;
     int cs;
     int dc;
     int rst;

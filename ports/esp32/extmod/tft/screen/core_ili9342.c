@@ -6,11 +6,18 @@
 #include "soc/mcpwm_struct.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "ili9342.h"
-#include "gfxfont/gfx.h"
-#include "esp32_hal_spi.h"
+#include "../gfxfont/gfx.h"
+#include "../esp32_hal_spi.h"
 
-static tft_host_t* ili9342 = NULL;
+#define MOSI_PIN 23
+#define MISO_PIN 19
+#define CLK_PIN 18
+#define CS_PIN 14
+#define DC_PIN 27
+#define RST_PIN 33
+#define BCKL_PIN 32
+
+static tft_host_t* core_tft_host = NULL;
 
 static const uint8_t ili9342_reg_init[] = {
   17,                   					        // 22 commands in list
@@ -44,8 +51,10 @@ static void pinInit(tft_host_t* host) {
     gpio_pad_select_gpio(host->base.dc);
     gpio_set_direction(host->base.dc, GPIO_MODE_OUTPUT);
 
-    gpio_pad_select_gpio(host->base.rst);
-    gpio_set_direction(host->base.rst, GPIO_MODE_OUTPUT);
+    if (host->base.rst >= 0) {
+        gpio_pad_select_gpio(host->base.rst);
+        gpio_set_direction(host->base.rst, GPIO_MODE_OUTPUT);
+    }
 }
 
 static void setBrightness(tft_host_t* host, uint8_t brightness) {
@@ -69,34 +78,39 @@ static void setBrightness(tft_host_t* host, uint8_t brightness) {
     mcpwm_set_duty_in_us(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, brightness);
 }
 
-tft_host_t* ili9342_init(tft_base_t* base) {
-    if (ili9342 == NULL) {
-        extern spi_device_handle_t spi_handle;
-        spiBusInit();
+tft_host_t* coreScreenInit() {
+    if (core_tft_host == NULL) {
+        core_tft_host = (tft_host_t*)heap_caps_calloc(1, sizeof(tft_host_t), MALLOC_CAP_DEFAULT | MALLOC_CAP_INTERNAL);
+        core_tft_host->base.mosi = MOSI_PIN;
+        core_tft_host->base.miso = MISO_PIN;
+        core_tft_host->base.cs = CS_PIN;
+        core_tft_host->base.clk = CLK_PIN;
+        core_tft_host->base.dc = DC_PIN;
+        core_tft_host->base.rst = RST_PIN;
+        core_tft_host->base.bckl = BCKL_PIN;
+        core_tft_host->base.width = 320;
+        core_tft_host->base.hight = 240;
+
+        spi_device_handle_t spi_handle = spiBusInit(MOSI_PIN, MISO_PIN, CLK_PIN, CS_PIN);
         spi_device_acquire_bus(spi_handle, portMAX_DELAY);
-
-        ili9342 = (tft_host_t*)heap_caps_calloc(1, sizeof(tft_host_t), MALLOC_CAP_DEFAULT | MALLOC_CAP_INTERNAL);
-        memcpy(&ili9342->base, base, sizeof(tft_base_t));
-        LcdHostInitDefault(ili9342);
-        LcdHostInitFontGfx(ili9342);
-        pinInit(ili9342);
-        ili9342->setBrightness = setBrightness;
+        LcdHostInitDefault(core_tft_host);
+        LcdHostInitFontGfx(core_tft_host);
+        pinInit(core_tft_host);
+        core_tft_host->setBrightness = setBrightness;
     }
 
-    if (ili9342->base.rst >= 0) {
-        gpio_set_level(ili9342->base.rst, 0);
-        vTaskDelay(pdMS_TO_TICKS(1));
-        gpio_set_level(ili9342->base.rst, 1);
-        vTaskDelay(pdMS_TO_TICKS(60));
-    }
+    gpio_set_level(core_tft_host->base.rst, 0);
+    vTaskDelay(pdMS_TO_TICKS(1));
+    gpio_set_level(core_tft_host->base.rst, 1);
+    vTaskDelay(pdMS_TO_TICKS(60));
 
-    ili9342->writeCmdList(ili9342, ili9342_reg_init);
+    core_tft_host->writeCmdList(core_tft_host, ili9342_reg_init);
     uint8_t bpc = TFT_COLOR_BITS_16;
-    ili9342->writeCmdData(ili9342, TFT_CMD_PIXFMT, &bpc, 1);
-    ili9342->writeCmd(ili9342, 0x21);
-    ili9342->setRotation(ili9342, PORTRAIT);
-    ili9342->fillScreen(ili9342, TFT_BLACK);
-    ili9342->setBrightness(ili9342, 20);
-    ili9342->setColor(ili9342, TFT_WHITE, TFT_WHITE);
-    return ili9342;
+    core_tft_host->writeCmdData(core_tft_host, TFT_CMD_PIXFMT, &bpc, 1);
+    core_tft_host->writeCmd(core_tft_host, 0x21);
+    core_tft_host->setRotation(core_tft_host, PORTRAIT);
+    core_tft_host->fillScreen(core_tft_host, TFT_BLACK);
+    core_tft_host->setBrightness(core_tft_host, 20);
+    core_tft_host->setColor(core_tft_host, TFT_WHITE, TFT_WHITE);
+    return core_tft_host;
 }

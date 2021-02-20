@@ -11,31 +11,44 @@
 
 #include "qrcode.h"
 #include "tfthost.h"
-#include "ili9342.h"
+#include "screen/tft.h"
 #include "gfxfont/gfx.h"
 
 const mp_obj_type_t display_tft_type;
+mp_obj_t* setBrightness_fun = NULL;
 
 typedef struct _display_tft_obj_t {
     mp_obj_base_t base;
     tft_host_t* tft_host;
+
+    mp_obj_t setBrightness;
 } display_tft_obj_t;
-// constructor(id, ...)
+
+static void setBrightness(tft_host_t* host, uint8_t brightness) {
+    if (setBrightness_fun != NULL) {
+        mp_call_function_1(*setBrightness_fun, mp_obj_new_int(brightness));
+    }
+}
+
 //-----------------------------------------------------------------------------------------------------------------
-STATIC mp_obj_t display_tft_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args)
-{
+STATIC mp_obj_t display_tft_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *all_args) {
+    
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_setBrightness,    MP_ARG_OBJ, {.u_obj = mp_const_none} },
+    };
+
+    // parse args
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all_kw_array(n_args, n_kw, all_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
     display_tft_obj_t *self = m_new_obj(display_tft_obj_t);
     self->base.type = &display_tft_type;
-
-    tft_base_t tft_base;
-    tft_base.cs = 4;
-    tft_base.dc = 27;
-    tft_base.rst = 33;
-    tft_base.bckl = 32;
-    tft_base.width = 320;
-    tft_base.hight = 240;
-    self->tft_host = ili9342_init(&tft_base);
-    
+    if (args[0].u_obj != mp_const_none) {
+        self->setBrightness = args[0].u_obj;
+        setBrightness_fun = &self->setBrightness;
+    }
+    // self->tft_host = coreScreenInit();
+    self->tft_host = core2ScreenInit(setBrightness);
     return MP_OBJ_FROM_PTR(self);
 }
 
