@@ -4,7 +4,6 @@ get_filename_component(MICROPY_DIR ${PROJECT_DIR}/../.. ABSOLUTE)
 # Include core source components.
 include(${MICROPY_DIR}/py/py.cmake)
 include(${MICROPY_DIR}/extmod/extmod.cmake)
-include(${MICROPY_DIR}/ports/esp32/extmod/m5extmod.cmake)
 
 set(MICROPY_QSTRDEFS_PORT
     ${PROJECT_DIR}/qstrdefsport.h
@@ -12,7 +11,6 @@ set(MICROPY_QSTRDEFS_PORT
 
 set(MICROPY_SOURCE_EXTMOD_EXTRA
     ${MICROPY_DIR}/extmod/modonewire.c
-    ${MICROPY_M5_SOURCE_EXTMOD}
 )
 
 set(MICROPY_SOURCE_LIB
@@ -73,6 +71,8 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/machine_rtc.c
     ${PROJECT_DIR}/machine_sdcard.c
 )
+
+include(${MICROPY_DIR}/ports/esp32/extmod/m5extmod.cmake)
 
 set(MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_PY}
