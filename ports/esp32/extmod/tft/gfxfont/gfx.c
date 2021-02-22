@@ -170,7 +170,7 @@ static void gfxPrint(tft_host_t* host, const char* string) {
             }
             cursor->x = cursor->x1;
             cursor->y += gfxFont->yAdvance;
-            if (cursor->y > host->_hight) {
+            if (cursor->y > host->text_cursor.y2) {
                 return ;
             }
         } else if (*st >= gfxFont->first && *st <= gfxFont->last) {
@@ -182,7 +182,7 @@ static void gfxPrint(tft_host_t* host, const char* string) {
                 }
                 cursor->x = cursor->x1;
                 cursor->y += gfxFont->yAdvance;
-                if (cursor->y > host->_hight) {
+                if (cursor->y > host->text_cursor.y2) {
                     return ;
                 }
             }

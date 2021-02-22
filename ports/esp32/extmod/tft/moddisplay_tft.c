@@ -790,6 +790,25 @@ STATIC mp_obj_t display_tft_stringWidth(size_t n_args, const mp_obj_t *pos_args,
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_KW(display_tft_stringWidth_obj, 1, display_tft_stringWidth);
 
+STATIC mp_obj_t display_tft_stringHight(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
+{
+  display_tft_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+    tft_host_t* host = self->tft_host;
+    const mp_arg_t allowed_args[] = {
+        { MP_QSTR_text,  MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_obj = mp_const_none } },
+    };
+
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    mp_int_t w = 0;
+
+    char *st = (char *)mp_obj_str_get_str(args[0].u_obj);
+    w = host->getStringHight(host, st);
+
+    return mp_obj_new_int(w);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(display_tft_stringHight_obj, 1, display_tft_stringHight);
+
 STATIC mp_obj_t display_tft_Image_buff(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) 
 {
     // const mp_arg_t allowed_args[] = {
@@ -1029,6 +1048,7 @@ STATIC const mp_rom_map_elem_t display_tft_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_text),				MP_ROM_PTR(&display_tft_text_obj) },
     { MP_ROM_QSTR(MP_QSTR_orient),				MP_ROM_PTR(&display_tft_setRot_obj) },
     { MP_ROM_QSTR(MP_QSTR_textWidth),			MP_ROM_PTR(&display_tft_stringWidth_obj) },
+    { MP_ROM_QSTR(MP_QSTR_fontHight),			MP_ROM_PTR(&display_tft_stringHight_obj) },
     // { MP_ROM_QSTR(MP_QSTR_textClear),			MP_ROM_PTR(&display_tft_clearStringRect_obj) },
     // { MP_ROM_QSTR(MP_QSTR_attrib7seg),			MP_ROM_PTR(&display_tft_7segAttrib_obj) },
     { MP_ROM_QSTR(MP_QSTR_image),				MP_ROM_PTR(&display_tft_Image_obj) },
