@@ -2,12 +2,14 @@
 
 extern const mp_obj_type_t display_tft_type;
 extern const mp_obj_type_t neopixel_type;
+extern const mp_obj_type_t machine_i2s_type;
 
 //===============================================================
 STATIC const mp_rom_map_elem_t m5_library_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__),        MP_ROM_QSTR(MP_QSTR_M5Library) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_TFT),         MP_ROM_PTR(&display_tft_type) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_Neopixel),    MP_ROM_PTR(&neopixel_type) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_I2S),         MP_ROM_PTR(&machine_i2s_type) },
 };
 
 //===============================================================================
