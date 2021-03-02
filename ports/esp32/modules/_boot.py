@@ -16,8 +16,11 @@ import axp192
 pmu = axp192.Axp192()
 pmu.powerAll()
 
-import display
-lcd = display.TFT(pmu.setLCDBrightness)
+import M5Library
+lcd = M5Library.TFT(pmu.setLCDBrightness)
+
+import sk6812 as _sk6812
+sk6812 = _sk6812.SK6812()
 
 import touch as _touch
 touch = _touch.touch()
@@ -60,4 +63,3 @@ lcd.setCursor(1, 40)
 lcd.print("hia" * 20)
 
 lcd.drawRect(0, 0, 160, 120, lcd.GREEN)
-

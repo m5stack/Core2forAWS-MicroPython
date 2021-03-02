@@ -23,22 +23,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "py/obj.h"
 
-extern const mp_obj_type_t display_tft_type;
+#include <stdio.h>
+#include "driver/rmt.h"
 
-//===============================================================
-STATIC const mp_rom_map_elem_t display_module_globals_table[] = {
-    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_display) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_TFT), MP_ROM_PTR(&display_tft_type) },
-};
 
-//===============================================================================
-STATIC MP_DEFINE_CONST_DICT(display_module_globals, display_module_globals_table);
+static uint8_t rmt_channel_alloc[RMT_CHANNEL_MAX] = {0};
 
-const mp_obj_module_t mp_module_display = {
-    .base = { &mp_type_module },
-    .globals = (mp_obj_dict_t*)&display_module_globals,
-};
 
-MP_REGISTER_MODULE(MP_QSTR_display, mp_module_display, 1);
+
+//---------------------------------------------------------------
+static bool rmt_channel_check( uint8_t channel, uint8_t num_mem )
+{
+	if (num_mem == 0 || channel >= RMT_CHANNEL_MAX) {
+		// wrong parameter
+		return false;
+	}
+	else if (num_mem == 1) {
+		// only one memory block requested
+		if (rmt_channel_alloc[channel] == 0) return true;
+		else return false;
+	}
+
+	return rmt_channel_check(channel - 1, num_mem - 1);
+}
+
+//------------------------------------------
+int platform_rmt_allocate( uint8_t num_mem )
+{
+	int channel;
+	uint8_t tag = 1;
+
+	for (channel = RMT_CHANNEL_MAX-1; channel >= 0; channel--) {
+		if (rmt_channel_alloc[channel] == 0) {
+			if (rmt_channel_check( channel, num_mem )) {
+				rmt_channel_alloc[channel] = tag++;
+				if (--num_mem == 0) break;
+			}
+		}
+	}
+
+	if (channel >= 0 && num_mem == 0) return channel;
+	else return -1;
+}
+
+//------------------------------------------
+void platform_rmt_release( uint8_t channel )
+{
+	for ( ; channel < RMT_CHANNEL_MAX; channel++ ) {
+		uint8_t tag = rmt_channel_alloc[channel];
+
+		rmt_channel_alloc[channel] = 0;
+		if (tag <= 1) break;
+	}
+}
+
