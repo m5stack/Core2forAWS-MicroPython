@@ -172,6 +172,9 @@ typedef struct _tft_host_t {
     uint8_t* trans_cline;
     text_cursor_t text_cursor;
 
+    void (*select)(tft_host_t* host);
+    void (*deselect)(tft_host_t* host);
+
     void (*selectDC)(tft_host_t* host, uint8_t level);
     void (*writeCmd)(tft_host_t* host, uint8_t cmd);
     void (*writeCmdData)(tft_host_t* host, uint8_t cmd, const uint8_t* data, uint16_t len);

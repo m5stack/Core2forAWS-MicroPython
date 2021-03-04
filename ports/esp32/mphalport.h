@@ -39,7 +39,7 @@
 // Until we move to IDF 4.2+, we need NimBLE on core 0, and for synchronisation
 // with the ringbuffer and scheduler MP needs to be on the same core.
 // See https://github.com/micropython/micropython/issues/5489
-#define MP_TASK_COREID (0)
+#define MP_TASK_COREID (1)
 
 extern TaskHandle_t mp_main_task_handle;
 

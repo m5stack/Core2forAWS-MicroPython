@@ -167,7 +167,7 @@ void mp_thread_finish(void) {
 }
 
 void vPortCleanUpTCB(void *tcb) {
-    if (thread == NULL) {
+    if (thread == NULL || thread_mutex.handle == NULL) {
         // threading not yet initialised
         return;
     }

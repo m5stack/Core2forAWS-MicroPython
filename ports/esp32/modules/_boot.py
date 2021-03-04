@@ -36,8 +36,6 @@ for datum in range(9):
 
     lcd.font(lcd.FONT_DejaVu26)
     lcd.text(160, 120, "fgG", lcd.WHITE, bgcolor=lcd.WHITE, textdatum=datum)
-    
-    lcd.font(lcd.FONT_DejaVu14)
     lcd.drawCircle(160, 120, 5, lcd.GREEN)
     lcd.drawPixel(160, 120, lcd.GREEN)
     
@@ -62,7 +60,6 @@ lcd.print("print demo\r\n", 0, 0)
 lcd.setCursor(1, 40)
 lcd.print("hia" * 20)
 
-lcd.drawRect(0, 0, 160, 120, lcd.GREEN)
 
 from machine import Pin
 from M5Library import I2S
@@ -93,5 +90,8 @@ def micro_show(y_offset=120):
         lcd.line(i * 2 + 44, y_offset + buffer[i],  i * 2 + 44 + 2, y_offset + buffer[i + 1], lcd.BLACK)
 
 lcd.clear(lcd.WHITE)
+
 while True:
     micro_show()
+
+# print(test())

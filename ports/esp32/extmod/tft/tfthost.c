@@ -2,6 +2,7 @@
 #include "math.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/semphr.h"
 #include "esp_heap_caps.h"
 #include "driver/gpio.h"
 #include "esp32_hal_spi.h"
@@ -16,7 +17,16 @@
 static float _angleOffset = -90;
 
 extern spi_device_handle_t spi_handle;
+QueueHandle_t spi_lock;
+
 /* ------------------------------low method------------------------------- */
+static void host_select(tft_host_t* host) {
+	xSemaphoreTake(spi_lock, portMAX_DELAY);
+}
+
+static void host_deselect(tft_host_t* host) {
+	xSemaphoreGive(spi_lock);
+}
 
 static void selectDC(tft_host_t* host, uint8_t level) {
     if (host->base.dc < 0) {
@@ -80,6 +90,7 @@ static void transferAddrWin(tft_host_t* host, uint16_t x1, uint16_t x2, uint16_t
 
 static void setRotation(tft_host_t* host, uint8_t rot) {
     uint8_t madctl = 0;
+	host->select(host);
 
     if (rot & 0x01) {
         host->_width = host->base.hight;
@@ -107,13 +118,23 @@ static void setRotation(tft_host_t* host, uint8_t rot) {
     }
 
     host->writeCmdData(host, TFT_MADCTL, &madctl, 1);
+	host->deselect(host);
+}
+
+static void drawPixel(tft_host_t* host, int16_t x, int16_t y, uint32_t color) {
+    if ((x > host->_width) || (y > host->_hight) || (x < 0) || (y < 0)) { return; }
+	host->select(host);
+    host->transferAddrWin(host, x, x + 1, y, y + 1);
+    color = ((color >> 8) & 0xff) | ((color & 0xff) << 8);
+    host->writeCmdData(host, TFT_RAMWR, (uint8_t *)&color, 2);
+	host->deselect(host);
 }
 
 static void pushColor(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint32_t color, uint32_t len, uint8_t wait) {
     if (len == 0) {
         return ;
     }
-
+	host->select(host);
     host->transferAddrWin(host, x1, x2, y1, y2);
 
     host->writeCmd(host, TFT_RAMWR);
@@ -135,7 +156,8 @@ static void pushColor(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, u
 
     if (wait) {
         spiWaitFinish(spi_handle);
-    }
+		host->deselect(host);
+	}
 }
 
 static void pushColorBuffer(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* color, uint32_t len) {
@@ -272,13 +294,6 @@ static void fillArcOffsetted(tft_host_t* host, uint16_t cx, uint16_t cy, uint16_
 }
 
 /* -------------------------- draw method ----------------------------- */
-static void drawPixel(tft_host_t* host, int16_t x, int16_t y, uint32_t color) {
-    if ((x > host->_width) || (y > host->_hight) || (x < 0) || (y < 0)) { return; }
-    host->transferAddrWin(host, x, x + 1, y, y + 1);
-    color = ((color >> 8) & 0xff) | ((color & 0xff) << 8);
-    host->writeCmdData(host, TFT_RAMWR, (uint8_t *)&color, 2);
-}
-
 static void drawFastVLine(tft_host_t* host, int16_t x, int16_t y, int16_t h, uint32_t color) {
 	if ((x < 0) || (x > host->_width) || (y > host->_hight)) { return ; }
     if (y < 0) { h += y; y = 0; }
@@ -831,4 +846,8 @@ void LcdHostInitDefault(tft_host_t* host) {
 		printf("tft memory malloc failed (%dKB)", TRANS_MAX_SIZE / 1024);
         return ;
     }
+
+	spi_lock = xSemaphoreCreateMutex();
+	host->select = host_select;
+	host->deselect = host_deselect;
 }
