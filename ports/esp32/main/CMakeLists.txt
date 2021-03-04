@@ -72,8 +72,6 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/machine_sdcard.c
 )
 
-include(${MICROPY_DIR}/ports/esp32/extmod/m5extmod.cmake)
-
 set(MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_PY}
     ${MICROPY_SOURCE_EXTMOD}
@@ -125,6 +123,8 @@ if(IDF_VERSION_MINOR GREATER_EQUAL 3)
     list(APPEND IDF_COMPONENTS esp_pm)
     list(APPEND IDF_COMPONENTS hal)
 endif()
+
+include(${MICROPY_DIR}/ports/esp32/extmod/m5extmod.cmake)
 
 # Register the main IDF component.
 idf_component_register(
