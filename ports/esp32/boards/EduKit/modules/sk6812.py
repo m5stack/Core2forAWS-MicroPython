@@ -2,11 +2,12 @@ import M5Library
 import machine
 from micropython import const
 
-LEFT  = const(0)
-RIGHT = const(1)
-ALL   = const(2)
 
 class SK6812:
+    LEFT  = const(0)
+    RIGHT = const(1)
+    ALL   = const(2)
+
     def __init__(self):
         self._np = M5Library.Neopixel(machine.Pin(25), 10)
 
