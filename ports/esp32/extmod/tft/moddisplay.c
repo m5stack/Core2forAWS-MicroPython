@@ -792,7 +792,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_KW(display_tft_stringWidth_obj, 1, display_tft_st
 
 STATIC mp_obj_t display_tft_stringHight(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
 {
-  display_tft_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+    display_tft_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
     tft_host_t* host = self->tft_host;
     const mp_arg_t allowed_args[] = {
         { MP_QSTR_text,  MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_obj = mp_const_none } },
@@ -847,19 +847,19 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_KW(display_tft_Image_buff_obj, 3, display_tft_Ima
 //-----------------------------------------------------------------------------------------------
 STATIC mp_obj_t display_tft_Image(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args)
 {
-    // display_tft_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
-    // tft_host_t* host = self->tft_host;
-    // const mp_arg_t allowed_args[] = {
-	// 	{ MP_QSTR_x,     MP_ARG_REQUIRED | MP_ARG_INT, { .u_int = 0 } },
-	// 	{ MP_QSTR_y,     MP_ARG_REQUIRED | MP_ARG_INT, { .u_int = 0 } },
-    //     { MP_QSTR_file,  MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_obj = mp_const_none } },
-    //     { MP_QSTR_scale,                   MP_ARG_INT, { .u_int = 0 } },
-    //     { MP_QSTR_type,                    MP_ARG_INT, { .u_int = -1 } },
-    //     { MP_QSTR_debug, MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 0 } },
-    // };
+    display_tft_obj_t *self = MP_OBJ_TO_PTR(pos_args[0]);
+    tft_host_t* host = self->tft_host;
+    const mp_arg_t allowed_args[] = {
+		{ MP_QSTR_x,     MP_ARG_REQUIRED | MP_ARG_INT, { .u_int = 0 } },
+		{ MP_QSTR_y,     MP_ARG_REQUIRED | MP_ARG_INT, { .u_int = 0 } },
+        { MP_QSTR_file,  MP_ARG_REQUIRED | MP_ARG_OBJ, { .u_obj = mp_const_none } },
+        { MP_QSTR_scale,                   MP_ARG_INT, { .u_int = 0 } },
+        { MP_QSTR_type,                    MP_ARG_INT, { .u_int = -1 } },
+        { MP_QSTR_debug, MP_ARG_KW_ONLY  | MP_ARG_INT, { .u_int = 0 } },
+    };
     
-    // mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    // mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
     
     // if(!mp_obj_is_str(args[2].u_obj)) {
     //     return display_tft_Image_buff(n_args, pos_args, kw_args);
@@ -897,7 +897,7 @@ STATIC mp_obj_t display_tft_Image(size_t n_args, const mp_obj_t *pos_args, mp_ma
     // 	host->bmp_image(host, args[0].u_int, args[1].u_int, args[3].u_int, fullname, NULL, 0);
     // }
     // else if (img_type == IMAGE_TYPE_JPG) {
-    // 	host->jpg_image(host, args[0].u_int, args[1].u_int, args[3].u_int, fullname, NULL, 0);
+    	host->drawJpegImage(host, args[0].u_int, args[1].u_int, args[3].u_int, mp_obj_str_get_str(args[2].u_obj), NULL, 0);
     // }
     // else if (img_type == IMAGE_TYPE_PNG)
     // {

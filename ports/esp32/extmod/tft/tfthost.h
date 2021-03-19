@@ -183,7 +183,7 @@ typedef struct _tft_host_t {
     void (*transferAddrWin)(tft_host_t* host, uint16_t x1, uint16_t x2, uint16_t y1, uint16_t y2);
     void (*setRotation)(tft_host_t* host, uint8_t rot);
     void (*pushColor)(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint32_t color, uint32_t len, uint8_t wait);
-    void (*pushColorBuffer)(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* color, uint32_t len);
+    void (*pushColorBuffer)(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* color, uint32_t len, uint8_t wait);
 
     void (*setBrightness)(tft_host_t* host, uint8_t brightness);
 
@@ -206,6 +206,8 @@ typedef struct _tft_host_t {
     void (*fillEllipse)(tft_host_t* host, uint16_t x0, uint16_t y0, uint16_t rx, uint16_t ry, uint32_t color, uint8_t option);
     void (*drawArc)(tft_host_t* host, uint16_t cx, uint16_t cy, uint16_t r, uint16_t th, float start, float end, uint32_t color, uint32_t fillcolor);
     void (*drawBitmap)(tft_host_t* host, int16_t x, int16_t y, int16_t w, int16_t h, uint8_t* bitmap, uint32_t color, uint32_t bg_color);
+
+    void (*drawJpegImage)(tft_host_t* host, int x, int y, uint8_t scale, const char *fname, uint8_t *buf, int size);
 
     // text
     void (*setCursor)(tft_host_t* host, int16_t x, int16_t y);

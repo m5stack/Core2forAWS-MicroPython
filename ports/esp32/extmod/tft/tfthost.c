@@ -22,9 +22,11 @@ QueueHandle_t spi_lock;
 /* ------------------------------low method------------------------------- */
 static void host_select(tft_host_t* host) {
 	xSemaphoreTake(spi_lock, portMAX_DELAY);
+	spiWaitFinish(spi_handle);
 }
 
 static void host_deselect(tft_host_t* host) {
+	spiWaitFinish(spi_handle);
 	xSemaphoreGive(spi_lock);
 }
 
@@ -155,13 +157,40 @@ static void pushColor(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, u
     }
 
     if (wait) {
-        spiWaitFinish(spi_handle);
 		host->deselect(host);
 	}
 }
 
-static void pushColorBuffer(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* color, uint32_t len) {
+static void pushColorBuffer(tft_host_t* host, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t* color, uint32_t len, uint8_t wait) {
+	if (len == 0 && color == NULL) {
+        return ;
+    }
+	host->select(host);
+    host->transferAddrWin(host, x1, x2, y1, y2);
 
+    host->writeCmd(host, TFT_RAMWR);
+    
+    host->selectDC(host, 1);
+
+    uint16_t lens = (len * 2) > TRANS_MAX_SIZE ? TRANS_MAX_SIZE : (len * 2);
+    int32_t to_sends = len * 2;
+	uint32_t now_send;
+	uint8_t* send_ptr = color;
+	while (to_sends > 0) {
+		now_send = to_sends > lens ? lens : to_sends;
+		if (!esp_ptr_dma_capable(color)) {
+			memcpy(host->trans_cline, send_ptr, now_send);
+			spiWriteBytesDMA(spi_handle, host->trans_cline, now_send);
+		} else {
+			spiWriteBytesDMA(spi_handle, send_ptr, now_send);
+		}
+		send_ptr += now_send; 
+		to_sends -= lens;
+	}
+
+    if (wait) {
+		host->deselect(host);
+	}
 }
 
 static void setBrightness(tft_host_t* host, uint8_t brightness) {
@@ -837,6 +866,9 @@ void LcdHostInitDefault(tft_host_t* host) {
 
 	host->drawBitmap = drawBitmap;
     host->setColor = setColor;
+
+	extern void jpeg_draw_image(tft_host_t* host, int x, int y, uint8_t scale, const char *fname, uint8_t *buf, int size);
+	host->drawJpegImage = jpeg_draw_image;
 
 	if (host->trans_cline == NULL) {
         host->trans_cline = heap_caps_malloc(TRANS_MAX_SIZE, MALLOC_CAP_DEFAULT | MALLOC_CAP_DMA);
