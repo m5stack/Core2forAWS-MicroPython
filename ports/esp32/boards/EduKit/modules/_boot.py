@@ -4,11 +4,14 @@ from flashbdev import bdev
 
 try:
     if bdev:
-        uos.mount(bdev, "/")
+        vfs = uos.VfsLfs2(bdev)
+        vfs = uos.VfsLfs2(bdev, progsize=32, readsize=128, lookahead=128)
+        uos.mount(vfs, "/flash")
 except OSError:
-    import inisetup
+    uos.VfsLfs2.mkfs(bdev)
+    vfs = uos.VfsLfs2(bdev, progsize=32, readsize=128, lookahead=128)
+    uos.mount(vfs, "/flash")
 
-    vfs = inisetup.setup()
-
+uos.chdir('/flash')
 gc.collect()
 
