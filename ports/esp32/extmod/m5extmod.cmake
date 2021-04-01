@@ -9,6 +9,7 @@ set(MICROPY_M5_SOURCE_EXTMOD
     ${MICROPY_M5_EXTMOD_DIR}/i2c_bus/i2c_device.c
     ${MICROPY_M5_EXTMOD_DIR}/modM5Library.c
     ${MICROPY_M5_EXTMOD_DIR}/modtouch.c
+    ${MICROPY_M5_EXTMOD_DIR}/modussl_mbedtls.c
     ${MICROPY_M5_EXTMOD_DIR}/machine_i2c.c
     ${MICROPY_M5_EXTMOD_DIR}/machine_i2s.c
     ${NEOPIXEL_FILE}

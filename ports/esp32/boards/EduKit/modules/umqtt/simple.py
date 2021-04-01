@@ -8,7 +8,7 @@ class MQTTException(Exception):
 class MQTTClient:
 
     def __init__(self, client_id, server, port=0, user=None, password=None, keepalive=0,
-                 ssl=False, ssl_params={}):
+                 ssl=False, atecc_ssl=False, ssl_params={}):
         if port == 0:
             port = 8883 if ssl else 1883
         self.client_id = client_id
@@ -26,6 +26,7 @@ class MQTTClient:
         self.lw_msg = None
         self.lw_qos = 0
         self.lw_retain = False
+        self.atecc_ssl = atecc_ssl
 
     def _send_str(self, s):
         self.sock.write(struct.pack("!H", len(s)))
@@ -59,6 +60,10 @@ class MQTTClient:
         if self.ssl:
             import ussl
             self.sock = ussl.wrap_socket(self.sock, **self.ssl_params)
+        if self.atecc_ssl:
+            import atecc608x
+            self.sock = atecc608x.wrap_socket(self.sock, **self.ssl_params)
+
         premsg = bytearray(b"\x10\0\0\0\0\0")
         msg = bytearray(b"\x04MQTT\x04\x02\0\0")
 
