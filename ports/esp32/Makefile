@@ -3,7 +3,7 @@
 # This is a simple, convenience wrapper around idf.py (which uses cmake).
 
 # Select the board to build for, defaulting to GENERIC.
-BOARD ?= EduKit
+BOARD ?= Core2forAWS
 
 # If the build directory is not given, make it reflect the board name.
 BUILD ?= build-$(BOARD)
@@ -16,7 +16,7 @@ PYTHON ?= python3
 
 GIT_SUBMODULES = lib/berkeley-db-1.xx
 
-.PHONY: all lfs2 clean deploy erase submodules FORCE
+.PHONY: all lfs2 clean deploy monitor erase submodules FORCE
 
 IDFPY_FLAGS += -D MICROPY_BOARD=$(BOARD) -B $(BUILD)
 
@@ -42,6 +42,9 @@ clean:
 
 deploy:
 	idf.py $(IDFPY_FLAGS) -p $(PORT) -b $(BAUD) flash
+
+monitor:
+	idf.py $(IDFPY_FLAGS) -p $(PORT) -b $(BAUD) monitor
 
 erase:
 	idf.py $(IDFPY_FLAGS) erase_flash

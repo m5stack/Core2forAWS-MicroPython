@@ -1,5 +1,5 @@
 set(SDKCONFIG_DEFAULTS
-    boards/EduKit/sdkconfig
+    boards/Core2forAWS/sdkconfig
 )
 
 set(EXTRA_COMPONENT_DIRS ${MICROPY_PORT_DIR}/extmod/components)

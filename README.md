@@ -1,188 +1,98 @@
-[![CI badge](https://github.com/micropython/micropython/workflows/unix%20port/badge.svg)](https://github.com/micropython/micropython/actions?query=branch%3Amaster+event%3Apush) [![Coverage badge](https://coveralls.io/repos/micropython/micropython/badge.png?branch=master)](https://coveralls.io/r/micropython/micropython?branch=master)
+# M5Stack Core2 for AWS IoT EduKit MicroPython Examples
+_NOTE:_ This repo is limited in functionality, and is a result of customer requests to have an AWS IoT referenceable example utilizing the ATECC608 in MicroPython. For more complete set of MicroPython functionality, we recommend using M5Stack's UIFlow tool. Community contributions are welcome.
 
-The MicroPython project
-=======================
-<p align="center">
-  <img src="https://raw.githubusercontent.com/micropython/micropython/master/logo/upython-with-micro.jpg" alt="MicroPython Logo"/>
-</p>
+## General Setup and Usage
+To use this repository on the [M5Stack Core2 for AWS IoT EduKit](https://m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit), you must have the ESP-IDF v4.2 installed first. You can find the installation instructions on [Espressif's Documentation](https://docs.espressif.com/projects/esp-idf/en/release-v4.2/esp32/get-started/index.html#installation-step-by-step). With the ESP-IDF tools added to your path, you can follow the steps below to run the various examples provided in this repository.
 
-This is the MicroPython project, which aims to put an implementation
-of Python 3.x on microcontrollers and small embedded systems.
-You can find the official website at [micropython.org](http://www.micropython.org).
+### Compiling the MicroPython Runtime
+To compile the runtime ported for the Core2 for AWS, you'll need to use the following commands to go into the port directory and use the **make** build system to compile the firmware. This will take some time depending on your computer's configuration:
 
-WARNING: this project is in beta stage and is subject to changes of the
-code-base, including project-wide name changes and API changes.
+```bash
+cd port/esp32
+make
+```
 
-MicroPython implements the entire Python 3.4 syntax (including exceptions,
-`with`, `yield from`, etc., and additionally `async`/`await` keywords from
-Python 3.5). The following core datatypes are provided: `str` (including
-basic Unicode support), `bytes`, `bytearray`, `tuple`, `list`, `dict`, `set`,
-`frozenset`, `array.array`, `collections.namedtuple`, classes and instances.
-Builtin modules include `sys`, `time`, and `struct`, etc. Select ports have
-support for `_thread` module (multithreading). Note that only a subset of
-Python 3 functionality is implemented for the data types and modules.
+### Uploading the MicroPython Runtime
+The now compiled firmware can be uploaded to the device by using the make operation "deploy":
 
-MicroPython can execute scripts in textual source form or from precompiled
-bytecode, in both cases either from an on-device filesystem or "frozen" into
-the MicroPython executable.
+_NOTE:_ If you receive an could not open port error, modify the **ports/esp32/Makefile** and replace the `PORT ?= /dev/ttyUSB0` with the correct port that the device is mounted to on your machine.
 
-See the repository http://github.com/micropython/pyboard for the MicroPython
-board (PyBoard), the officially supported reference electronic circuit board.
+```bash
+make deploy
+```
 
-Major components in this repository:
-- py/ -- the core Python implementation, including compiler, runtime, and
-  core library.
-- mpy-cross/ -- the MicroPython cross-compiler which is used to turn scripts
-  into precompiled bytecode.
-- ports/unix/ -- a version of MicroPython that runs on Unix.
-- ports/stm32/ -- a version of MicroPython that runs on the PyBoard and similar
-  STM32 boards (using ST's Cube HAL drivers).
-- ports/minimal/ -- a minimal MicroPython port. Start with this if you want
-  to port MicroPython to another microcontroller.
-- tests/ -- test framework and test scripts.
-- docs/ -- user documentation in Sphinx reStructuredText format. Rendered
-  HTML documentation is available at http://docs.micropython.org.
+### Uploading the Provided Examples
+There are a examples created specifically for the Core2 for AWS located in the **ports/esp32/boards/Core2forAWS/image_file/examples** folder. To upload these files to the device's filesystem, you can use the configured make operation "lfs2":
 
-Additional components:
-- ports/bare-arm/ -- a bare minimum version of MicroPython for ARM MCUs. Used
-  mostly to control code size.
-- ports/teensy/ -- a version of MicroPython that runs on the Teensy 3.1
-  (preliminary but functional).
-- ports/pic16bit/ -- a version of MicroPython for 16-bit PIC microcontrollers.
-- ports/cc3200/ -- a version of MicroPython that runs on the CC3200 from TI.
-- ports/esp8266/ -- a version of MicroPython that runs on Espressif's ESP8266 SoC.
-- ports/esp32/ -- a version of MicroPython that runs on Espressif's ESP32 SoC.
-- ports/nrf/ -- a version of MicroPython that runs on Nordic's nRF51 and nRF52 MCUs.
-- extmod/ -- additional (non-core) modules implemented in C.
-- tools/ -- various tools, including the pyboard.py module.
-- examples/ -- a few example Python scripts.
+```bash
+make lfs2
+```
 
-The subdirectories above may include READMEs with additional info.
+### Running one of the Uploaded Examples
+To run the example manually, you can execute the script from the REPL. To enter REPL prompt, use the make operation "monitor":
 
-"make" is used to build the components, or "gmake" on BSD-based systems.
-You will also need bash, gcc, and Python 3.3+ available as the command `python3`
-(if your system only has Python 2.7 then invoke make with the additional option
-`PYTHON=python2`).
+```bash
+make monitor
+```
 
-The MicroPython cross-compiler, mpy-cross
------------------------------------------
+_NOTE:_ To exit the serial monitor at any time, use the key combination **CTRL + }**
 
-Most ports require the MicroPython cross-compiler to be built first.  This
-program, called mpy-cross, is used to pre-compile Python scripts to .mpy
-files which can then be included (frozen) into the firmware/executable for
-a port.  To build mpy-cross use:
+To view the list of examples in the device's filesystem in the "examples" folder, use the **os** library.
 
-    $ cd mpy-cross
-    $ make
+```bash
+os.listdir('examples')
+```
 
-The Unix version
-----------------
+To run one of the examples, replace the <<FILENAME>> with the name of the Python script you want to execute:
 
-The "unix" port requires a standard Unix environment with gcc and GNU make.
-x86 and x64 architectures are supported (i.e. x86 32- and 64-bit), as well
-as ARM and MIPS. Making full-featured port to another architecture requires
-writing some assembly code for the exception handling and garbage collection.
-Alternatively, fallback implementation based on setjmp/longjmp can be used.
+```bash
+execfile("examples/<<FILENAME>>.py")
+```
 
-To build (see section below for required dependencies):
+## Running the AWS IoT Connectivity Example
+### Prerequisites
+In order to run the example, you will need to first have the device registered to your AWS account with the required policy attached to the thing, and your AWS IoT mqtt host endpoint address. It's recommended you complete the following AWS IoT EduKit tutorials first so you have everything setup:
+1) [Getting Started](https://edukit.workshop.aws/en/getting-started.html)
+2) [Cloud Connected Blinky](https://edukit.workshop.aws/en/blinky-hello-world.html)
 
-    $ cd ports/unix
-    $ make submodules
-    $ make
+### Wi-Fi Configuration
+To setup Wi-Fi you'll need to open the **ports/esp32/boards/Core2forAWS/image_file/examples/AWS_IoT_connect.py** file in your editor. You will need to modify the code below with the correct values in between the quotes:
+```Python
+wifi_ssid = "AWSWorkshop"       # Your Wi-Fi network SSID
+wifi_pass = "IoTP$AK1t"         # Your Wi-Fi network password
+```
+### AWS IoT Core Endpoint Address Configuration
+You will need to tell the client application the address of where to connect. To retrieve the AWS IoT ATS endpoint address, use the following AWS CLI command in a separate (not REPL) terminal window:
 
-Then to give it a try:
+```bash
+aws iot describe-endpoint --endpoint-type iot:Data-ATS
+```
 
-    $ ./micropython
-    >>> list(5 * x + y for x in range(10) for y in [4, 2, 1])
+Paste the value with the address retrieved from above in the Python script:
 
-Use `CTRL-D` (i.e. EOF) to exit the shell.
-Learn about command-line options (in particular, how to increase heap size
-which may be needed for larger applications):
+```Python
+mqtt_endpoint_address = ""
+```
 
-    $ ./micropython -h
+### Running the AWS IoT Example
+With the files newly modified, you'll need to reupload them to the device first. To do so, enter the command in your terminal window from the **/ports/esp32/** directory:
+```bash
+make lfs2
+```
 
-Run complete testsuite:
+Next, you'll execute that example from the REPL prompt by entering the following:
+```bash
+make monitor
+execfile("examples/AWS_IoT_connect.py")
+```
 
-    $ make test
+## Clean up
+To save power, bandwidth, and avoid unexpected AWS charges, it is always good to shut off usage of resources. You can either hold the power button for 6-seconds to shut off the device, or erase the flash memory.
 
-Unix version comes with a builtin package manager called upip, e.g.:
+_NOTE:_ Erasing the flash memory will cause the device to make a "ticking" sound as it constantly restarts itself due to not having an application to run. To avoid this, it is recommended you upload the [factory firmware](https://github.com/m5stack/Core2-for-AWS-IoT-EduKit/tree/master/Factory-Firmware).
 
-    $ ./micropython -m upip install micropython-pystone
-    $ ./micropython -m pystone
+To erase the flash memory, you can use the configured make operation "erase":
 
-Browse available modules on
-[PyPI](https://pypi.python.org/pypi?%3Aaction=search&term=micropython).
-Standard library modules come from
-[micropython-lib](https://github.com/micropython/micropython-lib) project.
-
-External dependencies
----------------------
-
-Building MicroPython ports may require some dependencies installed.
-
-For Unix port, `libffi` library and `pkg-config` tool are required. On
-Debian/Ubuntu/Mint derivative Linux distros, install `build-essential`
-(includes toolchain and make), `libffi-dev`, and `pkg-config` packages.
-
-Other dependencies can be built together with MicroPython. This may
-be required to enable extra features or capabilities, and in recent
-versions of MicroPython, these may be enabled by default. To build
-these additional dependencies, in the port directory you're
-interested in (e.g. `ports/unix/`) first execute:
-
-    $ make submodules
-
-This will fetch all the relevant git submodules (sub repositories) that
-the port needs.  Use the same command to get the latest versions of
-submodules as they are updated from time to time. After that execute:
-
-    $ make deplibs
-
-This will build all available dependencies (regardless whether they
-are used or not). If you intend to build MicroPython with additional
-options (like cross-compiling), the same set of options should be passed
-to `make deplibs`. To actually enable/disable use of dependencies, edit
-`ports/unix/mpconfigport.mk` file, which has inline descriptions of the options.
-For example, to build SSL module (required for `upip` tool described above,
-and so enabled by default), `MICROPY_PY_USSL` should be set to 1.
-
-For some ports, building required dependences is transparent, and happens
-automatically.  But they still need to be fetched with the `make submodules`
-command.
-
-The STM32 version
------------------
-
-The "stm32" port requires an ARM compiler, arm-none-eabi-gcc, and associated
-bin-utils.  For those using Arch Linux, you need arm-none-eabi-binutils,
-arm-none-eabi-gcc and arm-none-eabi-newlib packages.  Otherwise, try here:
-https://launchpad.net/gcc-arm-embedded
-
-To build:
-
-    $ cd ports/stm32
-    $ make submodules
-    $ make
-
-You then need to get your board into DFU mode.  On the pyboard, connect the
-3V3 pin to the P1/DFU pin with a wire (on PYBv1.0 they are next to each other
-on the bottom left of the board, second row from the bottom).
-
-Then to flash the code via USB DFU to your device:
-
-    $ make deploy
-
-This will use the included `tools/pydfu.py` script.  If flashing the firmware
-does not work it may be because you don't have the correct permissions, and
-need to use `sudo make deploy`.
-See the README.md file in the ports/stm32/ directory for further details.
-
-Contributing
-------------
-
-MicroPython is an open-source project and welcomes contributions. To be
-productive, please be sure to follow the
-[Contributors' Guidelines](https://github.com/micropython/micropython/wiki/ContributorGuidelines)
-and the [Code Conventions](https://github.com/micropython/micropython/blob/master/CODECONVENTIONS.md).
-Note that MicroPython is licenced under the MIT license, and all contributions
-should follow this license.
+```bash
+make erase
+```
