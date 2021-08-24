@@ -2,13 +2,13 @@
 _NOTE:_ This repo is limited in functionality, and is a result of customer requests to have an AWS IoT referenceable example utilizing the ATECC608 in MicroPython. For more complete set of MicroPython functionality, we recommend using M5Stack's UIFlow tool. Community contributions are welcome.
 
 ## General Setup and Usage
-To use this repository on the [M5Stack Core2 for AWS IoT EduKit](https://m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit), you must have the ESP-IDF v4.2 installed first. You can find the installation instructions on [Espressif's Documentation](https://docs.espressif.com/projects/esp-idf/en/release-v4.2/esp32/get-started/index.html#installation-step-by-step). With the ESP-IDF tools added to your path, you can follow the steps below to run the various examples provided in this repository.
+To use this repository on the [M5Stack Core2 for AWS IoT EduKit](https://m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit), you must have the [ESP-IDF release v4.2](https://github.com/espressif/esp-idf/tree/release/v4.2) installed first. You can find the installation instructions on [Espressif's Documentation](https://docs.espressif.com/projects/esp-idf/en/release-v4.2/esp32/get-started/index.html#installation-step-by-step). With the ESP-IDF tools added to your path, you can follow the steps below to run the various examples provided in this repository.
 
 ### Compiling the MicroPython Runtime
 To compile the runtime ported for the Core2 for AWS, you'll need to use the following commands to go into the port directory and use the **make** build system to compile the firmware. This will take some time depending on your computer's configuration:
 
 ```bash
-cd port/esp32
+cd ports/esp32
 make
 ```
 
