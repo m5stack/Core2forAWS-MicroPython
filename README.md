@@ -1,14 +1,50 @@
 # M5Stack Core2 for AWS IoT EduKit MicroPython Examples
 _NOTE:_ This repo is limited in functionality, and is a result of customer requests to have an AWS IoT referenceable example utilizing the ATECC608 in MicroPython. For more complete set of MicroPython functionality, we recommend using M5Stack's UIFlow tool. Community contributions are welcome.
 
+## Cloning
+This repo uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to bring in dependent components.
+
+Note: If you download the ZIP file provided by GitHub UI, you will not get the contents of the submodules. (The ZIP file is also not a valid git repository)
+
+If using Windows, because this repository and its submodules contain symbolic links, set `core.symlinks` to true with the following command:
+```
+git config --global core.symlinks true
+```
+In addition to this, either enable [Developer Mode](https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development) or, whenever using a git command that writes to the system (e.g. `git pull`, `git clone`, and `git submodule update --init --recursive`), use a console elevated as administrator so that git can properly create symbolic links for this repository. Otherwise, symbolic links will be written as normal files with the symbolic links' paths in them as text. [This](https://blogs.windows.com/windowsdeveloper/2016/12/02/symlinks-windows-10/) gives more explanation.
+
+To clone using HTTPS:
+```
+git clone https://github.com/m5stack/Core2forAWS-MicroPython.git --recurse-submodules
+```
+Using SSH:
+```
+git clone git@github.com:m5stack/Core2forAWS-MicroPython.git --recurse-submodules
+```
+
+If you have downloaded the repo without using the `--recurse-submodules` argument, you need to run:
+```
+git submodule update --init --recursive
+```
+
 ## General Setup and Usage
 To use this repository on the [M5Stack Core2 for AWS IoT EduKit](https://m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit), you must have the [ESP-IDF release v4.2](https://github.com/espressif/esp-idf/tree/release/v4.2) installed first. You can find the installation instructions on [Espressif's Documentation](https://docs.espressif.com/projects/esp-idf/en/release-v4.2/esp32/get-started/index.html#installation-step-by-step). With the ESP-IDF tools added to your path, you can follow the steps below to run the various examples provided in this repository.
+
+
+## Compiling the MicroPython cross-compiler, mpy-cross
+
+Most ports require the MicroPython cross-compiler to be built first.  This program, called mpy-cross, is used to pre-compile Python scripts to .mpy files which can then be included (frozen) into the firmware/executable for a port. To build mpy-cross use:
+
+```bash
+cd mpy-cross
+make
+```
 
 ### Compiling the MicroPython Runtime
 To compile the runtime ported for the Core2 for AWS, you'll need to use the following commands to go into the port directory and use the **make** build system to compile the firmware. This will take some time depending on your computer's configuration:
 
 ```bash
-cd ports/esp32
+cd ../ports/esp32
+make submodules
 make
 ```
 
@@ -28,6 +64,8 @@ There are a examples created specifically for the Core2 for AWS located in the *
 make lfs2
 ```
 
+_NOTE:_ If you have get a **ModuleNotFoundError: No module named 'littlefs'** error, install littlefs with `pip install littlefs-python`
+
 ### Running one of the Uploaded Examples
 To run the example manually, you can execute the script from the REPL. To enter REPL prompt, use the make operation "monitor":
 
@@ -40,6 +78,7 @@ _NOTE:_ To exit the serial monitor at any time, use the key combination **CTRL +
 To view the list of examples in the device's filesystem in the "examples" folder, use the **os** library.
 
 ```bash
+import os
 os.listdir('examples')
 ```
 
