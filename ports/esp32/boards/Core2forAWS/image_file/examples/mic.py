@@ -1,6 +1,6 @@
 from machine import Pin
 from M5Library import I2S
-from Edukit import lcd
+from Kit import lcd
 import struct
 import time
 

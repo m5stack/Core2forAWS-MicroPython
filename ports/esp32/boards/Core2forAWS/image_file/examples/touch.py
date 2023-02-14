@@ -1,4 +1,4 @@
-from Edukit import btn_left, touch
+from Kit import btn_left, touch
 import time
 
 while True:
