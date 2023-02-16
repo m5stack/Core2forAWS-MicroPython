@@ -1,8 +1,8 @@
-#   AWS IoT connectivity example in MicroPython for the M5Stack Core2 for AWS IoT EduKit
+#   AWS IoT connectivity example in MicroPython for the M5Stack Core2 for AWS IoT Kit
 #   This example uses the ESP32 to connect to AWS IoT Core using the attached ATECC608
 #   Trust&GO secure element for establishing a secure TLS connection.
 #
-#   Prerequisite — This example assumes you have completed the AWS IoT EduKit tutorials
+#   Prerequisite — This example assumes you have completed the AWS IoT Kit tutorials
 #   1) Getting Started
 #   2) Cloud Connected Blinky / Hello World
 #
@@ -54,7 +54,7 @@ def sub_cb(topic, msg):
 def aws_iot_publish():
     pub_topic = client_id + "/"
     print("Publishing to topic", pub_topic)
-    mqtt_client.publish(pub_topic, json.dumps({"message": "Hello World", "device_type": "Core2 for AWS IoT Edukit"}), qos=0)
+    mqtt_client.publish(pub_topic, json.dumps({"message": "Hello World", "device_type": "Core2 for AWS IoT Kit"}), qos=0)
 
 def aws_iot_subscribe():
     sub_topic = client_id + "/#"

@@ -1,6 +1,6 @@
 from M5Library import I2S
 from machine import Pin
-from Edukit import pmu
+from Kit import pmu
 import io
 
 BCK_PIN = Pin(12)

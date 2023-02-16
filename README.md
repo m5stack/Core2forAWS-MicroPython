@@ -1,4 +1,4 @@
-# M5Stack Core2 for AWS IoT EduKit MicroPython Examples
+# M5Stack Core2 for AWS IoT Kit MicroPython Examples
 _NOTE:_ This repo is limited in functionality, and is a result of customer requests to have an AWS IoT referenceable example utilizing the ATECC608 in MicroPython. For more complete set of MicroPython functionality, we recommend using M5Stack's UIFlow tool. Community contributions are welcome.
 
 ## Cloning
@@ -27,7 +27,7 @@ git submodule update --init --recursive
 ```
 
 ## General Setup and Usage
-To use this repository on the [M5Stack Core2 for AWS IoT EduKit](https://m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit), you must have the [ESP-IDF release v4.2](https://github.com/espressif/esp-idf/tree/release/v4.2) installed first. You can find the installation instructions on [Espressif's Documentation](https://docs.espressif.com/projects/esp-idf/en/release-v4.2/esp32/get-started/index.html#installation-step-by-step). With the ESP-IDF tools added to your path, you can follow the steps below to run the various examples provided in this repository.
+To use this repository on the [M5Stack Core2 for AWS IoT Kit](https://m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit), you must have the [ESP-IDF release v4.2](https://github.com/espressif/esp-idf/tree/release/v4.2) installed first. You can find the installation instructions on [Espressif's Documentation](https://docs.espressif.com/projects/esp-idf/en/release-v4.2/esp32/get-started/index.html#installation-step-by-step). With the ESP-IDF tools added to your path, you can follow the steps below to run the various examples provided in this repository.
 
 
 ## Compiling the MicroPython cross-compiler, mpy-cross
@@ -90,7 +90,7 @@ execfile("examples/<<FILENAME>>.py")
 
 ## Running the AWS IoT Connectivity Example
 ### Prerequisites
-In order to run the example, you will need to first have the device registered to your AWS account with the required policy attached to the thing, and your AWS IoT mqtt host endpoint address. It's recommended you complete the following AWS IoT EduKit tutorials first so you have everything setup:
+In order to run the example, you will need to first have the device registered to your AWS account with the required policy attached to the thing, and your AWS IoT mqtt host endpoint address. It's recommended you complete the following AWS IoT Kit tutorials first so you have everything setup:
 1) [Getting Started](https://edukit.workshop.aws/en/getting-started.html)
 2) [Cloud Connected Blinky](https://edukit.workshop.aws/en/blinky-hello-world.html)
 
@@ -128,7 +128,7 @@ execfile("examples/AWS_IoT_connect.py")
 ## Clean up
 To save power, bandwidth, and avoid unexpected AWS charges, it is always good to shut off usage of resources. You can either hold the power button for 6-seconds to shut off the device, or erase the flash memory.
 
-_NOTE:_ Erasing the flash memory will cause the device to make a "ticking" sound as it constantly restarts itself due to not having an application to run. To avoid this, it is recommended you upload the [factory firmware](https://github.com/m5stack/Core2-for-AWS-IoT-EduKit/tree/master/Factory-Firmware).
+_NOTE:_ Erasing the flash memory will cause the device to make a "ticking" sound as it constantly restarts itself due to not having an application to run. To avoid this, it is recommended you upload the [factory firmware](https://github.com/m5stack/Core2-for-AWS-IoT-Kit/tree/master/Factory-Firmware).
 
 To erase the flash memory, you can use the configured make operation "erase":
 
