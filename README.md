@@ -27,7 +27,7 @@ git submodule update --init --recursive
 ```
 
 ## General Setup and Usage
-To use this repository on the [M5Stack Core2 for AWS IoT Kit](https://m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-edukit), you must have the [ESP-IDF release v4.2](https://github.com/espressif/esp-idf/tree/release/v4.2) installed first. You can find the installation instructions on [Espressif's Documentation](https://docs.espressif.com/projects/esp-idf/en/release-v4.2/esp32/get-started/index.html#installation-step-by-step). With the ESP-IDF tools added to your path, you can follow the steps below to run the various examples provided in this repository.
+To use this repository on the [M5Stack Core2 for AWS IoT Kit](https://m5stack.com/products/m5stack-core2-esp32-iot-development-kit-for-aws-iot-kit), you must have the [ESP-IDF release v4.2](https://github.com/espressif/esp-idf/tree/release/v4.2) installed first. You can find the installation instructions on [Espressif's Documentation](https://docs.espressif.com/projects/esp-idf/en/release-v4.2/esp32/get-started/index.html#installation-step-by-step). With the ESP-IDF tools added to your path, you can follow the steps below to run the various examples provided in this repository.
 
 
 ## Compiling the MicroPython cross-compiler, mpy-cross
@@ -91,8 +91,8 @@ execfile("examples/<<FILENAME>>.py")
 ## Running the AWS IoT Connectivity Example
 ### Prerequisites
 In order to run the example, you will need to first have the device registered to your AWS account with the required policy attached to the thing, and your AWS IoT mqtt host endpoint address. It's recommended you complete the following AWS IoT Kit tutorials first so you have everything setup:
-1) [Getting Started](https://edukit.workshop.aws/en/getting-started.html)
-2) [Cloud Connected Blinky](https://edukit.workshop.aws/en/blinky-hello-world.html)
+1) [Getting Started](https://aws-iot-kit-docs.m5stack.com/en/getting-started/)
+2) [Cloud Connected Blinky](https://aws-iot-kit-docs.m5stack.com/en/blinky-hello-world/)
 
 ### Wi-Fi Configuration
 To setup Wi-Fi you'll need to open the **ports/esp32/boards/Core2forAWS/image_file/examples/AWS_IoT_connect.py** file in your editor. You will need to modify the code below with the correct values in between the quotes:
